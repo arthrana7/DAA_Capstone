@@ -1,171 +1,145 @@
-# ACADEMIC CAPSTONE PROJECT REPORT
-
-**Course Title:** Design and Analysis of Algorithms (ETCCDA302)  
-**Project Title:** Mini-Courier Planner — Intelligent Parcel Prioritization, Packing Optimization and Delivery Route Planning System  
-**Institution:** Department of Computer Science & Engineering, K.R. Mangalam University  
-**Student Level:** B.Tech Computer Science & Engineering  
-
----
-
-## Executive Summary
-
-The **Mini-Courier Planner** is an integrated software system that addresses the operational challenges of modern last-mile courier logistics. By synthesizing four foundational computer science algorithmic paradigms—**Divide-and-Conquer (Merge Sort)**, **Dynamic Programming (0/1 Knapsack)**, **Greedy Graph Traversal with Min-Heap (Dijkstra's Algorithm)**, and **Heuristic Route Approximation (Nearest Neighbor TSP)**—the project implements an end-to-end automated logistics planning pipeline.
-
-All algorithmic engines were manually developed from mathematical first principles in Python 3 without reliance on high-level algorithmic libraries (such as built-in sort wrappers, NetworkX shortest-path routines, or external TSP solvers). High-resolution empirical performance benchmarking (`time.perf_counter()`) across small ($n=10$), medium ($n=100$), and large ($n=500$) datasets verified theoretical asymptotic bounds. Both an interactive terminal CLI and a Streamlit web interface were deployed.
+# SwiftRoute AI: Algorithmic Logistics Optimization Engine
+## Capstone Project Report — Design & Analysis of Algorithms (ETCCDA302)
+**Department of Computer Science & Engineering, K.R. Mangalam University**  
+**Programme:** B.Tech Computer Science & Engineering (FSD-A)  
+**Submitted By:** Arth Rana  
+**Roll No.:** 2501350005  
 
 ---
 
-## Phase 1: Courier Problem Design and Planning
+## 1. Executive Summary & Problem Formulation
 
-### 1.1 Problem Context & Industry Relevance
-In courier hubs (e.g., in Gurugram NCR), packages arrive continuously. Distribution hubs face four key bottlenecks:
-1. **Urgency Bottleneck**: High-priority and fast-expiring deliveries must not be delayed by bulk or standard consignments.
-2. **Payload Bottleneck**: Delivery vehicles have physical payload limits ($W$ kg). Loading sub-optimally wastes vehicle trips or breaches safety regulations.
-3. **Road Distance Bottleneck**: Cities comprise complex road intersections, one-way avenues, and varied road lengths; simple Euclidean distance fails to reflect real road travel.
-4. **Sequencing Bottleneck**: Visiting stops randomly leads to backtracking, excessive fuel consumption, and delivery delays.
+In modern parcel delivery and urban supply chain logistics, distribution hubs face four interrelated algorithmic challenges daily:
+1. **Urgency-Driven Prioritization**: Determining which packages must receive immediate processing based on emergency priority levels and strict customer delivery deadlines.
+2. **Payload-Constrained Cargo Packing**: Selecting an optimal combination of parcels that maximizes cumulative invoice revenue while strictly adhering to a delivery vehicle's maximum gross payload capacity ($W$).
+3. **Shortest Network Pathfinding**: Computing the exact minimum road driving distances from the central logistics depot to every designated customer drop-off location across an urban road grid.
+4. **Closed-Loop Tour Scheduling (TSP)**: Determining the optimal sequence of stops for the delivery vehicle to visit all designated drop-off points and return safely to the depot while minimizing cumulative driving distance and fuel burn.
 
-### 1.2 System Pipeline Architecture
-The system models a sequential 5-stage pipeline:
+**SwiftRoute AI** is an integrated algorithmic dispatch engine built from mathematical first principles in Python 3. The system integrates four foundational computer science algorithmic paradigms into a cohesive, sequential pipeline:
+- **Divide-and-Conquer**: Manual 3-tier Merge Sort for stable $O(n \log n)$ prioritization.
+- **Dynamic Programming**: Manual 0/1 Knapsack Tabulation with 2D matrix backtracking in $O(n \cdot W)$ time.
+- **Greedy Graph Traversal**: Manual Dijkstra Shortest Path algorithm using a binary min-heap (`heapq`) in $O((V+E)\log V)$ time.
+- **Heuristic Tour Approximation**: Manual Nearest Neighbor heuristic for Traveling Salesperson Problem (TSP) in $O(k^2)$ time.
 
+No high-level black-box sorting libraries, third-party shortest-path functions, or external TSP solvers were used in core algorithmic routines.
+
+---
+
+## 2. Phase 1 — Problem Design, Network Topology & Data Modeling
+
+### 2.1 Domain Data Architecture
+Each consignment is encapsulated by a dedicated data record containing seven primary attributes:
+- **Consignment ID** (`parcel_id`): Unique alphanumeric tracking code (`SR-101` to `SR-116`).
+- **Recipient** (`customer_name`): Name of customer/client.
+- **Destination Node** (`delivery_location`): Target node in the urban road network.
+- **Payload Weight** (`weight`): Integer mass in kilograms ($w_i \in [1, 20]$ kg).
+- **Urgency Rating** (`priority`): Integer priority on a 1-to-10 scale ($10 = \text{Emergency}$, $1 = \text{Routine}$).
+- **Service Deadline** (`delivery_deadline`): Maximum allowable turnaround time in hours.
+- **Invoice Value** (`value`): Monetary worth of consignment in Indian Rupees (₹).
+
+The active operational dataset consists of **16 real-world parcels** across **12 urban road hubs** centered at `Okhla Central Hub`.
+
+### 2.2 Complete Parcel Inventory Dataset
+
+| ID | Recipient / Customer | Destination Location | Weight (kg) | Priority (1-10) | Deadline (hrs) | Invoice Value (₹) |
+| :---: | :--- | :--- | :---: | :---: | :---: | :---: |
+| **SR-101** | Aryan Malhotra | Connaught Place | 4 | 10 | 1 | ₹2,100.00 |
+| **SR-102** | Ishita Sengupta | Nehru Place | 3 | 10 | 2 | ₹1,850.00 |
+| **SR-103** | Devansh Mehra | Hauz Khas | 5 | 9 | 2 | ₹1,400.00 |
+| **SR-104** | Kavya Singhania | Noida Sector 18 | 6 | 9 | 3 | ₹1,650.00 |
+| **SR-105** | Tanya Chawla | Saket District Centre | 4 | 8 | 2 | ₹1,300.00 |
+| **SR-106** | Rishi Kapoor | Lajpat Nagar | 7 | 8 | 4 | ₹1,200.00 |
+| **SR-107** | Ananya Deshmukh | Aerocity Hub | 2 | 9 | 1 | ₹1,950.00 |
+| **SR-108** | Siddharth Joshi | Greater Kailash | 5 | 8 | 3 | ₹1,250.00 |
+| **SR-109** | Rhea Batra | Jasola Vihar | 8 | 7 | 4 | ₹950.00 |
+| **SR-110** | Harshvardhan Rao | Lodhi Colony | 3 | 9 | 2 | ₹1,500.00 |
+| **SR-111** | Meenakshi Sundaram | Vasant Kunj | 6 | 7 | 5 | ₹1,100.00 |
+| **SR-112** | Zoya Akhtar | Connaught Place | 2 | 10 | 1 | ₹2,250.00 |
+| **SR-113** | Nikhil Aggarwal | Nehru Place | 12 | 6 | 6 | ₹850.00 |
+| **SR-114** | Simran Kaur | Hauz Khas | 4 | 8 | 3 | ₹1,350.00 |
+| **SR-115** | Abhinav Saxena | Saket District Centre | 9 | 5 | 7 | ₹700.00 |
+| **SR-116** | Pooja Hegde | Noida Sector 18 | 5 | 9 | 2 | ₹1,600.00 |
+
+### 2.3 Road Network Graph Modeling
+The metropolitan delivery territory is modeled as a weighted undirected graph $G = (V, E)$:
+- **Vertices ($V$, $|V| = 12$)**: `Okhla Central Hub` (Primary Depot), `Nehru Place`, `Lajpat Nagar`, `Lodhi Colony`, `Connaught Place`, `Hauz Khas`, `Saket District Centre`, `Greater Kailash`, `Jasola Vihar`, `Noida Sector 18`, `Aerocity Hub`, `Vasant Kunj`.
+- **Edges ($E$, $|E| = 17$)**: Bidirectional roadway segments weighted by actual driving distance in kilometers.
+- **Storage Paradigm**: Adjacency list (`Dict[str, List[Tuple[str, float]]]`). Because metropolitan road grids are sparse ($E \ll V^2$), an adjacency list consumes strictly $O(V + E)$ auxiliary memory, drastically outperforming an $O(V^2)$ adjacency matrix.
+
+---
+
+## 3. Phase 2 — Consignment Prioritization and Payload Packing
+
+### 3.1 Consignment Prioritization via Manual Merge Sort
+- **Algorithmic Paradigm**: Divide-and-Conquer.
+- **Multi-Level Comparator Logic**:
+  1. **Primary Key**: Urgency Priority (`priority`) in **descending** order.
+  2. **Secondary Key**: Service Deadline (`delivery_deadline`) in **ascending** order.
+  3. **Tie-Breaker Key**: Consignment ID (`parcel_id`) in **ascending** lexicographical order.
+- **Theoretical Complexity**: Time $O(n \log n)$ across all cases; Auxiliary Space $O(n)$ for merging. Stable sorting preserves natural arrival order.
+
+### 3.2 Vehicle Payload Optimization via 0/1 Knapsack Dynamic Programming
+Given vehicle payload capacity $W = 35\text{ kg}$:
+$$\text{dp}[i][w] = \begin{cases} \text{dp}[i-1][w] & \text{if } w_i > w \\ \max(\text{dp}[i-1][w], \, \text{dp}[i-1][w - w_i] + v_i) & \text{if } w_i \le w \end{cases}$$
+
+#### Knapsack Optimization Results ($W = 35\text{ kg}$):
+- **Parcels Selected (9 items)**: `SR-101`, `SR-112`, `SR-102`, `SR-107`, `SR-103`, `SR-110`, `SR-116`, `SR-104`, `SR-114`
+- **Total Payload Weight Loaded**: **$34\text{ kg} / 35\text{ kg}$** ($97.14\%$ payload capacity utilization)
+- **Cumulative Consignment Revenue**: **₹15,650.00**
+- **Remaining Payload Margin**: **$1\text{ kg}$**
+- **Excluded Parcels**: Lower-priority/heavy packages (e.g., `SR-106`, `SR-109`, `SR-113`, `SR-115`) were deferred to prevent payload breaches.
+
+---
+
+## 4. Phase 3 — Shortest Road Pathfinding and Closed-Loop Tour Dispatch
+
+### 4.1 Shortest Path Navigation via Dijkstra's Algorithm
+The 9 selected parcels map to **6 unique destination hubs**:
+1. `Nehru Place`: $3.20\text{ km}$ (`Okhla Central Hub ➔ Nehru Place`)
+2. `Noida Sector 18`: $7.00\text{ km}$ (`Okhla Central Hub ➔ Jasola Vihar ➔ Noida Sector 18`)
+3. `Lodhi Colony`: $8.80\text{ km}$ (`Okhla Central Hub ➔ Nehru Place ➔ Lajpat Nagar ➔ Lodhi Colony`)
+4. `Hauz Khas`: $8.90\text{ km}$ (`Okhla Central Hub ➔ Saket District Centre ➔ Hauz Khas`)
+5. `Connaught Place`: $13.60\text{ km}$ (`Okhla Central Hub ➔ Nehru Place ➔ Lajpat Nagar ➔ Lodhi Colony ➔ Connaught Place`)
+6. `Aerocity Hub`: $15.00\text{ km}$ (`Okhla Central Hub ➔ Saket District Centre ➔ Vasant Kunj ➔ Aerocity Hub`)
+
+Complexity: Time $O((V + E) \log V)$, Space $O(V + E)$.
+
+---
+
+### 4.2 Closed-Loop Delivery Tour via Nearest Neighbor TSP Heuristic
+- **Ordered Tour Sequence**:  
+  `Okhla Central Hub ➔ Nehru Place ➔ Lodhi Colony ➔ Hauz Khas ➔ Aerocity Hub ➔ Connaught Place ➔ Noida Sector 18 ➔ Okhla Central Hub`
+- **Total Circuit Driving Distance**: **$53.60\text{ km}$**  
+  ($3.20 + 5.60 + 4.20 + 8.20 + 11.50 + 13.90 + 7.00 = 53.60\text{ km}$)
+- **Estimated Fuel Burn**: $\approx 6.31\text{ Litres}$ (at an average van economy of $8.5\text{ km/L}$)
+- **Loop Closed**: Yes (Vehicle safely returns to base depot).
+
+---
+
+## 5. Phase 4 — Testing and Verification
+
+- **Automated Unit Tests**: 28 tests passing in 0.003s across sorting, knapsack, dijkstra, tsp, and end-to-end integration.
+- **Empirical Benchmarking**: Verified $O(n \log n)$ sub-quadratic scaling for Merge Sort and $O(n \cdot W)$ pseudo-polynomial linearity for 0/1 Knapsack.
+
+---
+
+## 6. How to Run
+
+```bash
+cd CAPSTONE-DAA
+source venv/bin/activate
+pip install -r requirements.txt
+
+# Run Web Dashboard
+streamlit run app.py
+
+# Run Automated CLI Demo
+python main.py --demo
+
+# Run Unit Tests
+python -m unittest discover tests -v
 ```
-[Incoming Parcel Registry]
-           │
-           ▼
-[Phase 2A: Manual Merge Sort Engine]
-           │ (Deterministic priority & deadline ordering)
-           ▼
-[Phase 2B: 0/1 Knapsack DP Packing Engine]
-           │ (Optimal cargo selection under payload constraint W)
-           ▼
-[Phase 3A: Delivery Road Graph & Adjacency List]
-           │ (Weighted undirected graph G=(V, E))
-           ▼
-[Phase 3B: Dijkstra Shortest Path Engine (heapq)]
-           │ (True shortest road path between depot and all stops)
-           ▼
-[Phase 3C: Nearest Neighbor TSP Tour Engine]
-           │ (Closed-loop delivery sequence s -> v1 -> v2 ... -> s)
-           ▼
-[Dispatch Manifest, Driver Itinerary & Network Visualization]
-```
 
 ---
-
-## Phase 2: Package Prioritization and Box Filling
-
-### 2.1 Package Prioritization (Manual Merge Sort)
-- **Objective**: Sort pending packages to ensure critical consignments receive scheduling priority.
-- **Sorting Criteria**:
-  1. Priority rank ($10 = \text{Emergency/High Value}$, $1 = \text{Standard}$) in **descending** order.
-  2. Delivery deadline in hours ($1\text{h} < 2\text{h} < 8\text{h}$) in **ascending** order.
-  3. Unique Parcel ID (e.g., `P101` before `P102`) as a deterministic tie-breaker.
-- **Algorithmic Justification**: Merge Sort divides the input array recursively until singletons are formed ($T(n) = 2T(n/2) + O(n)$). By the Master Theorem, $T(n) \in \Theta(n \log n)$ across worst, average, and best cases. Furthermore, Merge Sort is **stable**, ensuring parcels with identical sorting criteria preserve their natural arrival order.
-
-### 2.2 Vehicle Box Filling (0/1 Knapsack Dynamic Programming)
-- **Objective**: Pack the delivery vehicle of capacity $W$ with a subset of parcels that maximizes cumulative monetary/service profit $\sum v_i$ such that $\sum w_i \le W$.
-- **Mathematical Recurrence**:
-  Let $dp[i][w]$ denote the maximum value obtainable using a subset of the first $i$ prioritized parcels with a weight limit of $w$:
-  $$\text{dp}[i][w] = \begin{cases} \text{dp}[i-1][w] & \text{if } w_i > w \\ \max(\text{dp}[i-1][w], \text{dp}[i-1][w - w_i] + v_i) & \text{if } w_i \le w \end{cases}$$
-- **Reconstruction by Backtracking**:
-  Starting at cell $(n, W)$:
-  - If $dp[i][w] \ne dp[i-1][w]$, item $i$ was chosen. We append parcel $i-1$, decrement $w \leftarrow w - w_i$, and decrement $i \leftarrow i - 1$.
-  - Otherwise, item $i$ was not chosen; decrement $i \leftarrow i - 1$.
-- **Complexity Analysis**:
-  - Time Complexity: $O(n \cdot W)$ operations.
-  - Space Complexity: $O(n \cdot W)$ for table storage.
-  - Pseudo-polynomial property: The algorithm depends on the numeric value of $W$, not just input length.
-
----
-
-## Phase 3: Route Maker and Graph Processing
-
-### 3.1 Graph Representation: Adjacency List
-The urban road delivery network is represented as a weighted undirected graph $G = (V, E)$:
-- **Vertices ($V$)**: Geographic delivery hubs (e.g., `Central Warehouse`, `Cyber City`, `Sector 14`, `MG Road`, `Golf Course Road`, `Sohna Road`, etc.).
-- **Edges ($E$)**: Bidirectional roads weighted by driving distances in kilometers.
-- **Storage**: Adjacency list storing `Dict[str, List[Tuple[str, float]]]`.
-- **Advantage over Adjacency Matrix**: For road networks where average degree per vertex is small ($d \ll V$), the adjacency list uses $O(V + E)$ space compared to $O(V^2)$ matrix memory.
-
-### 3.2 Shortest Road Distance (Manual Dijkstra Algorithm)
-- **Objective**: Determine the shortest driving path and road distance from `Central Warehouse` to every chosen delivery location.
-- **Mechanism**:
-  - Employs a binary min-heap (`heapq`) storing `(tentative_distance, node_name)`.
-  - Maintains `distances` dictionary initialized to $\infty$ (source $= 0.0$) and `predecessors` dictionary initialized to `None`.
-  - At each step, extracts the vertex $u$ with minimum tentative distance and relaxes outgoing edges $(u, v, \text{weight})$.
-- **Complexity**: $O((V + E) \log V)$ time using binary heap, $O(V + E)$ auxiliary space.
-
-### 3.3 Route Tour Generation (Nearest Neighbor TSP Approximation)
-- **Objective**: Generate a viable closed-loop tour starting at the warehouse, delivering to all destination nodes, and returning to the warehouse.
-- **Mechanism**:
-  1. $T \leftarrow [s]$, $\text{Current} \leftarrow s$, $\text{Unvisited} \leftarrow V_{\text{dest}} \setminus \{s\}$.
-  2. While $\text{Unvisited} \ne \emptyset$:
-     - For each candidate $c \in \text{Unvisited}$, look up shortest path distance $\text{dist}(\text{Current}, c)$ via Dijkstra.
-     - Choose $v^* = \arg\min_{c \in \text{Unvisited}} \text{dist}(\text{Current}, c)$.
-     - Append $v^*$ to $T$, remove from $\text{Unvisited}$, and set $\text{Current} \leftarrow v^*$.
-  3. Close tour: Add leg from last stop back to warehouse $s$.
-- **Approximation Discussion**:
-  TSP is strongly NP-Hard ($O(2^k k^2)$ via Held-Karp dynamic programming). The Nearest Neighbor heuristic runs in polynomial time $O(k^2 + k(V+E)\log V)$ where $k$ is the number of stops. Although greedy decisions can occasionally lead to a longer return leg, it provides a fast and practical solution for delivery logistics.
-
----
-
-## Phase 4: Performance Testing and Optimization
-
-### 4.1 Empirical Measurement Methodology
-Benchmarking was executed using Python's `time.perf_counter()` to obtain sub-millisecond precision.
-Three dataset configurations were tested:
-- **Small Dataset**: 10 parcels, vehicle capacity $W = 50$, 10 graph nodes, 5 delivery stops.
-- **Medium Dataset**: 100 parcels, vehicle capacity $W = 200$, 30 graph nodes, 15 delivery stops.
-- **Large Dataset**: 500 parcels, vehicle capacity $W = 500$, 100 graph nodes, 30 delivery stops.
-
-### 4.2 Benchmark Results
-
-| Algorithm | Theoretical Time Complexity | Small ($n=10$) | Medium ($n=100$) | Large ($n=500$) |
-| :--- | :--- | :--- | :--- | :--- |
-| **Merge Sort** | $O(n \log n)$ | **0.0149 ms** | **0.2113 ms** | **2.1197 ms** |
-| **0/1 Knapsack DP** | $O(n \cdot W)$ | **0.1316 ms** | **7.4802 ms** | **70.1319 ms** |
-| **Dijkstra (Heap)** | $O((V + E) \log V)$ | **0.0186 ms** | **0.1442 ms** | **0.3044 ms** |
-| **Nearest Neighbor TSP** | $O(k^2 + k(V+E)\log V)$ | **0.1767 ms** | **1.5944 ms** | **8.8744 ms** |
-
-### 4.3 0/1 Knapsack Capacity Sensitivity Analysis
-To confirm the $O(n \cdot W)$ pseudo-polynomial nature of the Knapsack DP, item count was held constant at $N = 100$ while vehicle capacity $W$ was varied from 20 to 1500 kg:
-
-| Fixed Items ($N$) | Vehicle Capacity ($W$) | Table Cells ($N \times W$) | Execution Time (ms) |
-| :--- | :--- | :--- | :--- |
-| 100 | 20 kg | 2,121 | 0.8142 ms |
-| 100 | 50 kg | 5,151 | 1.8791 ms |
-| 100 | 100 kg | 10,201 | 3.6625 ms |
-| 100 | 200 kg | 20,301 | 7.3912 ms |
-| 100 | 400 kg | 40,501 | 15.1104 ms |
-| 100 | 800 kg | 80,901 | 29.8421 ms |
-| 100 | 1500 kg | 151,601 | 56.4019 ms |
-
-**Finding**: The execution time scales in direct proportion to $W$, providing empirical proof of the $O(n \cdot W)$ recurrence.
-
----
-
-## Phase 5: Final Report and Demonstration
-
-### 5.1 Verification Checklist
-- [x] Merge Sort implemented manually without Python `list.sort()` or `sorted()`.
-- [x] 0/1 Knapsack DP constructed manually with a 2D matrix and backtracking.
-- [x] Delivery road graph implemented as an adjacency list.
-- [x] Dijkstra algorithm implemented manually using binary min-heap (`heapq`).
-- [x] Nearest Neighbor TSP implemented manually using shortest-path distances.
-- [x] All 28 automated unit tests pass successfully.
-- [x] Genuine empirical measurements recorded in `reports/performance_results.csv`.
-- [x] Real charts generated and saved in `reports/` and `screenshots/`.
-- [x] Streamlit web application (`app.py`) and CLI (`main.py`) operational.
-
-### 5.2 Verification Evidence and Output Locations
-- **Visual Network Route Plot**: `reports/delivery_route_visualization.png`
-- **Algorithmic Bar Chart**: `reports/performance_runtime_comparison.png`
-- **Scaling Growth Curves**: `reports/performance_scaling_curves.png`
-- **Knapsack Capacity Curve**: `reports/knapsack_capacity_impact.png`
-- **Benchmark CSV Table**: `reports/performance_results.csv`
-
----
-
-## Conclusion
-
-The Mini-Courier Planner provides a rigorous, demonstrable synthesis of classic algorithmic techniques applied to an authentic engineering problem. The project demonstrates the distinction between theoretical complexity and empirical execution, highlights the trade-offs between exact DP solutions and heuristic approximations, and prepares students for academic evaluation and industry software design.
-
+**Report Submitted By:** **Arth Rana** (Roll No.: **2501350005**)  
+B.Tech CSE FSD-A, K.R. Mangalam University

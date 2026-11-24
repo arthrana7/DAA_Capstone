@@ -1,7 +1,8 @@
-# Mini-Courier Planner — Intelligent Parcel Prioritization, Packing Optimization and Delivery Route Planning System
+# SwiftRoute AI — Intelligent Parcel Prioritization, Packing Optimization and Delivery Route Planning System
 
 **Design and Analysis of Algorithms (ETCCDA302) — Capstone Project**  
-**Department of Computer Science & Engineering, K.R. Mangalam University**
+**Department of Computer Science & Engineering, K.R. Mangalam University**  
+**Submitted by:** Arth Rana | **Roll No.:** 2501350005 | **Section:** B.Tech CSE (FSD-A)
 
 ---
 
@@ -14,7 +15,7 @@ In modern logistics and e-commerce supply chains, courier distribution centers r
 3. **Shortest Path Routing**: What is the shortest road network distance from the central logistics depot to every designated customer drop-off node?
 4. **Tour Scheduling (TSP)**: In what sequence should the delivery van visit customer drop-offs and return to the depot while minimizing cumulative driving distance and fuel consumption?
 
-The **Mini-Courier Planner** is an integrated software system that bridges foundational Computer Science algorithms into an operational, automated decision-support pipeline.
+The **SwiftRoute AI** is an integrated software system that bridges foundational Computer Science algorithms into an operational, automated decision-support pipeline.
 
 ---
 

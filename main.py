@@ -12,8 +12,11 @@ Main application entry point providing:
 import argparse
 import json
 import os
+import shutil
 import sys
 from typing import List
+
+os.environ.setdefault("MPLCONFIGDIR", "/tmp/mpl")
 
 from models.parcel import Parcel
 from models.delivery_graph import DeliveryGraph
@@ -37,15 +40,15 @@ def load_sample_data(base_dir: str):
     with open(graph_path, "r", encoding="utf-8") as f:
         raw_graph = json.load(f)
         graph = DeliveryGraph.from_dict(raw_graph)
-        warehouse = raw_graph.get("warehouse", "Central Warehouse")
+        warehouse = raw_graph.get("warehouse", "Okhla Central Hub")
 
     return parcels, graph, warehouse
 
 
 def print_banner():
     print("=" * 80)
-    print(" MINI-COURIER PLANNER: ALGORITHMIC OPTIMIZATION ENGINE")
-    print(" K.R. Mangalam University — Design & Analysis of Algorithms (ETCCDA302)")
+    print(" 🚀 SWIFTROUTE LOGISTICS — SMART PARCEL DISPATCH & ROUTE OPTIMIZATION")
+    print(" Design & Analysis of Algorithms — Capstone Algorithmic Engine")
     print("=" * 80)
 
 
@@ -121,10 +124,18 @@ def run_demo(base_dir: str):
 
     # 5. Generate Network Visualization
     reports_dir = os.path.join(base_dir, "reports")
+    screenshots_dir = os.path.join(base_dir, "screenshots")
     os.makedirs(reports_dir, exist_ok=True)
+    os.makedirs(screenshots_dir, exist_ok=True)
+    
     viz_path = os.path.join(reports_dir, "delivery_route_visualization.png")
+    viz_screenshot = os.path.join(screenshots_dir, "delivery_route_visualization.png")
+    
     plot_delivery_network(graph, tsp_res, save_path=viz_path)
+    shutil.copy2(viz_path, viz_screenshot)
+    
     print(f"\n[✓] Generated delivery network route visualization at: {viz_path}")
+    print(f"[✓] Automatically updated screenshot at: {viz_screenshot}")
     print("=" * 80)
     print(" DEMO COMPLETED SUCCESSFULLY!")
     print("=" * 80)
@@ -221,7 +232,7 @@ def interactive_cli(base_dir: str):
         elif choice == "9":
             run_demo(base_dir)
         elif choice == "0":
-            print("Exiting Mini-Courier Planner. Goodbye!")
+            print("Exiting SwiftRoute Logistics Engine. Goodbye!")
             sys.exit(0)
         else:
             print("[!] Invalid option. Please enter 0-9.")
@@ -230,7 +241,7 @@ def interactive_cli(base_dir: str):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Mini-Courier Planner")
+    parser = argparse.ArgumentParser(description="SwiftRoute Logistics — Smart Dispatch Engine")
     parser.add_argument("--demo", action="store_true", help="Run automated end-to-end demonstration")
     parser.add_argument("--benchmark", action="store_true", help="Run empirical performance benchmarking suite")
     args = parser.parse_args()

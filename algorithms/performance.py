@@ -13,8 +13,12 @@ to demonstrate O(n * W) pseudo-polynomial complexity.
 
 import os
 import random
+import shutil
 import time
 from typing import List, Dict, Any, Tuple
+
+os.environ.setdefault("MPLCONFIGDIR", "/tmp/mpl")
+
 import pandas as pd
 
 from models.parcel import Parcel
@@ -228,9 +232,18 @@ def run_benchmarks(reports_dir: str = "reports") -> Dict[str, Any]:
     generate_scaling_line_chart(df_results, save_path=line_chart_path)
     generate_knapsack_capacity_impact_chart(knap_capacity_records, save_path=knap_chart_path)
 
+    # Also automatically update the screenshots folder
+    base_proj_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    screenshots_dir = os.path.join(base_proj_dir, "screenshots")
+    os.makedirs(screenshots_dir, exist_ok=True)
+    shutil.copy2(bar_chart_path, os.path.join(screenshots_dir, "performance_runtime_comparison.png"))
+    shutil.copy2(line_chart_path, os.path.join(screenshots_dir, "performance_scaling_curves.png"))
+    shutil.copy2(knap_chart_path, os.path.join(screenshots_dir, "knapsack_capacity_impact.png"))
+
     print(f"[✓] Bar chart generated: {bar_chart_path}")
     print(f"[✓] Scaling line chart generated: {line_chart_path}")
     print(f"[✓] Knapsack impact chart generated: {knap_chart_path}")
+    print(f"[✓] Automatically updated all 3 charts in: {screenshots_dir}")
 
     return {
         "results_dataframe": df_results,
