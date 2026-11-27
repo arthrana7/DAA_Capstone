@@ -305,16 +305,16 @@ if menu_choice == "⚡ Mission Control (Dashboard)":
         ```mermaid
         flowchart LR
             subgraph S1["Phase 1: Prioritize"]
-                A[Raw Inflow] --> B[Merge Sort\nO(n log n)]
+                A["Raw Inflow"] --> B["Merge Sort<br/>O(n log n)"]
             end
             subgraph S2["Phase 2: Cargo Packing"]
-                B --> C[0/1 Knapsack DP\nO(n·W)]
+                B --> C["0/1 Knapsack DP<br/>O(n · W)"]
             end
             subgraph S3["Phase 3: Road Routing"]
-                C --> D[Dijkstra Heap\nO(V+E log V)]
-                D --> E[Nearest Neighbor TSP\nO(k²)]
+                C --> D["Dijkstra Heap<br/>O((V+E) log V)"]
+                D --> E["Nearest Neighbor TSP<br/>O(k^2)"]
             end
-            E --> F([Dispatched Fleet])
+            E --> F(["Dispatched Fleet"])
             style S1 fill:#EEF2FF,stroke:#4F46E5,stroke-width:2px
             style S2 fill:#ECFDF5,stroke:#10B981,stroke-width:2px
             style S3 fill:#FFFBEB,stroke:#F59E0B,stroke-width:2px
